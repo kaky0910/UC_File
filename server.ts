@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import {default as multer} from 'multer'
 import fs from 'fs'
 import path from 'path'
+import { File } from './types'
 import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi, { SwaggerOptions } from 'swagger-ui-express'
 
@@ -31,20 +32,28 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use('/files', express.static('data'));
+app.use('/files', express.static('uploads'));
 
 app.use('/update', express.static('updates'));
 
-app.post('/upload', upload.array('test'), (req, res, next) => {
-  console.log(req.body);
-  console.log(req.files);
-  console.log(req.file)
-});
+app.post('/upload', upload.array('eztalk-upload'), (req, res, next) => {
+  const now = new Date();
 
-app.post('/upload', upload.array('teststring'), (req, res, next) => {
-  // console.log(req);
-  console.log(req.files);
-  console.log(req.file)
+  if (req.files) {
+    let reqFiles = req.files as Express.Multer.File[];
+    let responseFiles = [] as File[];
+    for (let i = 0; i < reqFiles.length; i++) {
+      responseFiles.push({
+        remote_url: reqFiles[i].path.replace('uploads', 'files'),
+        file_name: reqFiles[i].originalname,
+        file_size: reqFiles[i].size,
+        file_extension: reqFiles[i].mimetype,
+        expire_date: now
+      } as File)
+    }
+    res.send(responseFiles);
+  }
+  next({})
 });
 
 console.log(`${process.env.SERVICE_PORT}`);
