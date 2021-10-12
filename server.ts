@@ -5,8 +5,6 @@ import {default as multer} from 'multer'
 import fs from 'fs'
 import path from 'path'
 import { File } from './types'
-import swaggerJSDoc from 'swagger-jsdoc'
-import swaggerUi, { SwaggerOptions } from 'swagger-ui-express'
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -36,7 +34,7 @@ app.use('/files', express.static('uploads'));
 
 app.use('/update', express.static('updates'));
 
-app.post('/upload', upload.array('eztalk-upload'), (req, res, next) => {
+app.post('/upload', upload.array('ezARIA-upload'), (req, res, next) => {
   const now = new Date();
 
   if (req.files) {
@@ -56,7 +54,7 @@ app.post('/upload', upload.array('eztalk-upload'), (req, res, next) => {
   next({})
 });
 
-console.log(`${process.env.SERVICE_PORT}`);
+// console.log(`${process.env.SERVICE_PORT}`);
 app.listen(`${process.env.SERVICE_PORT}`, () => {
   console.log(`Server On. Port: ${process.env.SERVICE_PORT}`);
 })
